@@ -19,12 +19,12 @@
                     <div class="form-group row">
                         <div class="col-md-6">
                             <div class="input-group">
-                                <select class="form-control col-md-3" id="opcion" name="opcion">
+                                <select class="form-control col-md-3" v-model="criterio">
                                     <option value="nombre">Nombre</option>
                                     <option value="descripcion">Descripción</option>
                                 </select>
-                                <input type="text" id="texto" name="texto" class="form-control" placeholder="Texto a buscar">
-                                <button type="submit" class="btn btn-primary"><i class="fa fa-search"></i> Buscar</button>
+                                <input type="text" v-model="buscar" @keyup.enter="listarCartegoria(1, buscar, criterio)" class="form-control" placeholder="Texto a buscar">
+                                <button type="submit" @click="listarCartegoria(1, buscar, criterio)" class="btn btn-primary"><i class="fa fa-search"></i> Buscar</button>
                             </div>
                         </div>
                     </div>
@@ -43,9 +43,17 @@
                                 <button type="button" @click="abrirModal('categoria', 'actualizar', categoria)" class="btn btn-warning btn-sm">
                                     <i class="icon-pencil"></i>
                                 </button> &nbsp;
-                                <button type="button" class="btn btn-danger btn-sm">
-                                    <i class="icon-trash"></i>
-                                </button>
+                                <template v-if="categoria.condicion">
+                                    <button type="button" class="btn btn-danger btn-sm" @click="desactivarCategoria(categoria.id)">
+                                        <i class="icon-trash"></i>
+                                    </button>
+                                </template>
+                                <template v-else>
+                                    <button type="button" class="btn btn-info btn-sm" @click="activarCategoria(categoria.id)">
+                                        <i class="icon-check"></i>
+                                    </button>
+                                </template>
+
                             </td>
                             <td v-text="categoria.nombre"></td>
                             <td v-text="categoria.descripcion"></td>
@@ -63,23 +71,14 @@
                     </table>
                     <nav>
                         <ul class="pagination">
-                            <li class="page-item">
-                                <a class="page-link" href="#">Ant</a>
+                            <li class="page-item" v-if="pagination.current_page > 1">
+                                <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page - 1, buscar, criterio)">Ant</a>
                             </li>
-                            <li class="page-item active">
-                                <a class="page-link" href="#">1</a>
+                            <li class="page-item" v-for="page in pagesNumber" :key="page" :class="[page == isActived ? 'active' : '']">
+                                <a class="page-link" href="#" @click.prevent="cambiarPagina(page, buscar, criterio)" v-text="page"></a>
                             </li>
-                            <li class="page-item">
-                                <a class="page-link" href="#">2</a>
-                            </li>
-                            <li class="page-item">
-                                <a class="page-link" href="#">3</a>
-                            </li>
-                            <li class="page-item">
-                                <a class="page-link" href="#">4</a>
-                            </li>
-                            <li class="page-item">
-                                <a class="page-link" href="#">Sig</a>
+                            <li class="page-item" v-if="pagination.current_page < pagination.last_page">
+                                <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page + 1, buscar, criterio)" >Sig</a>
                             </li>
                         </ul>
                     </nav>
@@ -103,21 +102,29 @@
                                 <label class="col-md-3 form-control-label" for="text-input">Nombre</label>
                                 <div class="col-md-9">
                                     <input type="text" v-model="nombre" class="form-control" placeholder="Nombre de categoría">
-                                    <span class="help-block">(*) Ingrese el nombre de la categoría</span>
+
                                 </div>
                             </div>
                             <div class="form-group row">
                                 <label class="col-md-3 form-control-label" for="email-input">Descripción</label>
                                 <div class="col-md-9">
-                                    <input type="email" v-model="descripcion" class="form-control" placeholder="Ingrese descripcion">
+                                    <input type="text" v-model="descripcion" class="form-control" placeholder="Ingrese descripcion">
                                 </div>
+                            </div>
+                            <div v-show="errorCategoria" class="form-group row div-error">
+                                <div class="text-center text-error">
+                                    <div v-for="error in errorMostrarMensajeCategoria" :key="error" v-text="error">
+
+                                    </div>
+                                </div>
+
                             </div>
                         </form>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" @click="cerrarModal()">Cerrar</button>
                         <button type="button" v-if="tipoAccion==1" class="btn btn-primary" @click="registrarCategoria()">Guardar</button>
-                        <button type="button" v-if="tipoAccion==2" class="btn btn-primary">Actualizar</button>
+                        <button type="button" v-if="tipoAccion==2" class="btn btn-primary" @click="actualizarCategoria()">Actualizar</button>
                     </div>
                 </div>
                 <!-- /.modal-content -->
@@ -125,29 +132,6 @@
             <!-- /.modal-dialog -->
         </div>
         <!--Fin del modal-->
-        <!-- Inicio del modal Eliminar -->
-        <div class="modal fade" id="modalEliminar" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" style="display: none;" aria-hidden="true">
-            <div class="modal-dialog modal-danger" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title">Eliminar Categoría</h4>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">×</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <p>Estas seguro de eliminar la categoría?</p>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                        <button type="button" class="btn btn-danger">Eliminar</button>
-                    </div>
-                </div>
-                <!-- /.modal-content -->
-            </div>
-            <!-- /.modal-dialog -->
-        </div>
-        <!-- Fin del modal Eliminar -->
     </main>
 </template>
 
@@ -155,36 +139,183 @@
     export default {
         data(){
             return{
+                categoria_id:0,
                 nombre:'',
                 descripcion:'',
                 arrayCategoria:[],
                 modal : 0,
                 tituloModal : '',
-                tipoAccion : 0
+                tipoAccion : 0,
+                errorCategoria : 0,
+                errorMostrarMensajeCategoria : [],
+                pagination :{
+                    'total' : 0,
+                    'current_page' : 0,
+                    'per_page' : 0,
+                    'last_page' : 0,
+                    'from' : 0,
+                    'to' : 0
+                },
+                offset : 3,
+                criterio :'nombre',
+                buscar : ''
+            }
+        },
+        computed:{
+            isActived: function () {
+                return this.pagination.current_page;
+            },
+            //Calcula los elementos de la paginación
+            pagesNumber: function() {
+                if(!this.pagination.to) {
+                    return [];
+                }
+
+                var from = this.pagination.current_page - this.offset;
+                if(from < 1) {
+                    from = 1;
+                }
+
+                var to = from + (this.offset * 2);
+                if(to >= this.pagination.last_page){
+                    to = this.pagination.last_page;
+                }
+
+                var pagesArray = [];
+                while(from <= to) {
+                    pagesArray.push(from);
+                    from++;
+                }
+                return pagesArray;
+
             }
         },
         methods:{
-            listarCartegoria () {
+            cambiarPagina(page, buscar, criterio){
                 let me = this;
 
-                axios.get('/categoria').then(function (response) {
-                    me.arrayCategoria = response.data;
+                me.pagination.current_page = page;
+                me.listarCartegoria(page, buscar, criterio);
+            },
+            listarCartegoria (page, buscar, criterio) {
+                let me = this;
+                var url = '/categoria?page=' + page + '&buscar=' + buscar + '&criterio=' + criterio;
+
+                axios.get(url).then(function (response) {
+                    var respuesta = response.data;
+                    me.arrayCategoria = respuesta.categorias.data;
+                    me.pagination = respuesta.pagination;
                 })
                 .catch(function (error) {
                     console.log(error);
                 });
             },
             registrarCategoria(){
+                if (this.validarCategoria()){
+                    return
+                }
                 let me = this;
                 axios.post('/categoria/registrar',{
                     'nombre' : this.nombre,
                     'descripcion':this.descripcion
                 }).then(function (response) {
                     me.cerrarModal();
-                    me.listarCartegoria();
+                    me.listarCartegoria(1,'','nombre');
                 }).catch(function (error) {
                     console.log(error);
                 });
+            },
+            actualizarCategoria(){
+                if (this.validarCategoria()){
+                    return
+                }
+
+                let me = this;
+                axios.put('/categoria/actualizar',{
+                    'nombre' : this.nombre,
+                    'descripcion':this.descripcion,
+                    'id' : this.categoria_id
+                }).then(function (response) {
+                    me.cerrarModal();
+                    me.listarCartegoria(1,'','nombre');
+                }).catch(function (error) {
+                    console.log(error);
+                });
+
+            },
+            desactivarCategoria(id){
+                const swalWithBootstrapButtons = swal.mixin({
+                    confirmButtonClass: 'btn btn-success',
+                    cancelButtonClass: 'btn btn-danger',
+                    buttonsStyling: false,
+                });
+
+                swalWithBootstrapButtons({
+                    title: 'Esta seguro de desactivar esta categoria?',
+                    type: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Aceptar',
+                    cancelButtonText: 'Cancelar',
+                    reverseButtons: true
+                }).then((result) => {
+                    if (result.value) {
+                        let me = this;
+                        axios.put('/categoria/desactivar',{
+                            'id' : id
+                        }).then(function (response) {
+                            me.listarCartegoria(1,'','nombre');
+                            swalWithBootstrapButtons(
+                                'Desactivado!',
+                                'El registro ha sido desactivado',
+                                'success'
+                            )
+                        }).catch(function (error) {
+                            console.log(error);
+                        });
+                    }
+                });
+            },
+            activarCategoria(id){
+                const swalWithBootstrapButtons = swal.mixin({
+                    confirmButtonClass: 'btn btn-success',
+                    cancelButtonClass: 'btn btn-danger',
+                    buttonsStyling: false,
+                });
+
+                swalWithBootstrapButtons({
+                    title: 'Esta seguro de activar esta categoria?',
+                    type: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Aceptar',
+                    cancelButtonText: 'Cancelar',
+                    reverseButtons: true
+                }).then((result) => {
+                    if (result.value) {
+                    let me = this;
+                    axios.put('/categoria/activar',{
+                        'id' : id
+                    }).then(function (response) {
+                        me.listarCartegoria(1,'','nombre');
+                        swalWithBootstrapButtons(
+                            'Activado!',
+                            'El registro ha sido activado',
+                            'success'
+                        )
+                    }).catch(function (error) {
+                        console.log(error);
+                    });
+                }
+            });
+            },
+
+            validarCategoria(){
+              this.errorCategoria = 0;
+              this.errorMostrarMensajeCategoria = [];
+
+              if (!this.nombre) this.errorMostrarMensajeCategoria.push("El nombre de la categoria no puede estar vacio.");
+              if (this.errorMostrarMensajeCategoria.length) this.errorCategoria = 1;
+
+              return this.errorCategoria;
             },
             cerrarModal(){
                 this.modal = 0;
@@ -209,11 +340,17 @@
                             }
                             case "actualizar":
                             {
-
+                                //console.log(data);
+                                this.modal = 1;
+                                this.tituloModal = 'Actualizar categoria';
+                                this.tipoAccion = 2;
+                                this.categoria_id = data['id'];
+                                this.nombre = data['nombre'];
+                                this.descripcion = data['descripcion'];
+                                break;
                             }
                         }
                     }
-
                 }
             }
 
@@ -221,7 +358,7 @@
 
         },
         mounted() {
-            this.listarCartegoria();
+            this.listarCartegoria(1, this.buscar, this.criterio);
         }
     }
 </script>
@@ -235,5 +372,13 @@
         opacity: 1 !important;
         position: absolute !important;
         background-color: #3c29297a !important;
+    }
+    .div-error{
+        display: flex;
+        justify-content: center;
+    }
+    .text-error{
+        color: red !important;
+        font-weight: bold;
     }
 </style>

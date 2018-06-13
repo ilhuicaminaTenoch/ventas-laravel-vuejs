@@ -18,6 +18,6 @@ Route::get('/', function () {
 
 Route::get('/categoria','CategoriaController@index');
 Route::post('/categoria/registrar','CategoriaController@store');
-Route::put('/categoria/registrar','CategoriaController@update');
+Route::put('/categoria/actualizar','CategoriaController@update');
 Route::put('/categoria/activar','CategoriaController@activar');
 Route::put('/categoria/desactivar','CategoriaController@desactivar');
