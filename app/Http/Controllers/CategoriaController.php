@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Articulo;
 use Illuminate\Http\Request;
 use App\Categoria;
 //use Illuminate\Support\Facades\DB;
@@ -25,9 +26,6 @@ class CategoriaController extends Controller
         }else{
             $categorias = Categoria::where($criterio, 'like', '%'.$buscar.'%')->orderBy('id', 'desc')->paginate(3);
         }
-
-
-
 
         return [
             'pagination' => [
@@ -53,12 +51,16 @@ class CategoriaController extends Controller
     {
         if (!$request->ajax()) return redirect('/');
 
-        $categoria = new Categoria();
+        $articulo = new Articulo();
 
-        $categoria->nombre = $request->nombre;
-        $categoria->descripcion = $request->descripcion;
-        $categoria->condicion = '1';
-        $categoria->save();
+        $articulo->id_categoria = $request->id_categoria;
+        $articulo->codigo = $request->codigo;
+        $articulo->nombre = $request->nombre;
+        $articulo->precio_venta = $request->precio_venta;
+        $articulo->stock = $request->stock;
+        $articulo->descripcion = $request->descripcion;
+        $articulo->condicion = '1';
+        $articulo->save();
     }
 
     /**
@@ -72,29 +74,33 @@ class CategoriaController extends Controller
     {
         if (!$request->ajax()) return redirect('/');
 
-        $categoria = Categoria::findOrFail($request->id);
-        $categoria->nombre = $request->nombre;
-        $categoria->descripcion = $request->descripcion;
-        $categoria->condicion = '1';
-        $categoria->save();
+        $articulo = Articulo::findOrFail($request->id);
+        $articulo->id_categoria = $request->id_categoria;
+        $articulo->codigo = $request->codigo;
+        $articulo->nombre = $request->nombre;
+        $articulo->precio_venta = $request->precio_venta;
+        $articulo->stock = $request->stock;
+        $articulo->descripcion = $request->descripcion;
+        $articulo->condicion = '1';
+        $articulo->save();
 
     }
 
     public function desactivar(Request $request)
     {
         if (!$request->ajax()) return redirect('/');
-        $categoria = Categoria::findOrFail($request->id);
-        $categoria->condicion = '0';
-        $categoria->save();
+        $articulo = Articulo::findOrFail($request->id);
+        $articulo->condicion = '0';
+        $articulo->save();
     }
 
     public function activar(Request $request)
     {
         if (!$request->ajax()) return redirect('/');
 
-        $categoria = Categoria::findOrFail($request->id);
-        $categoria->condicion = '1';
-        $categoria->save();
+        $articulo = Articulo::findOrFail($request->id);
+        $articulo->condicion = '1';
+        $articulo->save();
     }
 
 
