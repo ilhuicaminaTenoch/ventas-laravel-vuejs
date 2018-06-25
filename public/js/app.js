@@ -48974,23 +48974,27 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 console.log(error);
             });
         },
-        registrarCategoria: function registrarCategoria() {
-            if (this.validarCategoria()) {
+        registrarArticulo: function registrarArticulo() {
+            if (this.validarArticulo()) {
                 return;
             }
             var me = this;
-            axios.post('/categoria/registrar', {
+            axios.post('/articulo/registrar', {
+                'id_categoria': this.id_categoria,
+                'codigo': this.codigo,
                 'nombre': this.nombre,
+                'stock': this.stock,
+                'precio_venta': this.precioVenta,
                 'descripcion': this.descripcion
             }).then(function (response) {
                 me.cerrarModal();
-                me.listarCartegoria(1, '', 'nombre');
+                me.listarArticulo(1, '', 'nombre');
             }).catch(function (error) {
                 console.log(error);
             });
         },
-        actualizarCategoria: function actualizarCategoria() {
-            if (this.validarCategoria()) {
+        actualizarArticulo: function actualizarArticulo() {
+            if (this.validarArticulo()) {
                 return;
             }
 
@@ -49006,7 +49010,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 console.log(error);
             });
         },
-        desactivarCategoria: function desactivarCategoria(id) {
+        desactivarArticulo: function desactivarArticulo(id) {
             var _this = this;
 
             var swalWithBootstrapButtons = swal.mixin({
@@ -49036,7 +49040,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 }
             });
         },
-        activarCategoria: function activarCategoria(id) {
+        activarArticulo: function activarArticulo(id) {
             var _this2 = this;
 
             var swalWithBootstrapButtons = swal.mixin({
@@ -49066,20 +49070,30 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 }
             });
         },
-        validarCategoria: function validarCategoria() {
-            this.errorCategoria = 0;
-            this.errorMostrarMensajeCategoria = [];
+        validarArticulo: function validarArticulo() {
+            this.errorArticulo = 0;
+            this.errorMostrarMensajeArticulo = [];
 
-            if (!this.nombre) this.errorMostrarMensajeCategoria.push("El nombre de la categoria no puede estar vacio.");
-            if (this.errorMostrarMensajeCategoria.length) this.errorCategoria = 1;
+            if (this.id_categoria == 0) this.errorMostrarMensajeArticulo.push("Seleccione una categoria");
+            if (!this.nombre) this.errorMostrarMensajeArticulo.push("El nombre del ariticulo no puede estar vacio");
+            if (!this.stock) this.errorMostrarMensajeArticulo.push("El stock del articulo debe de ser un número y no puede estar vacio.");
+            if (!this.precioVenta) this.errorMostrarMensajeArticulo.push("El precio de venta del articulo debe ser un numero");
 
-            return this.errorCategoria;
+            if (this.errorMostrarMensajeArticulo.length) this.errorArticulo = 1;
+
+            return this.errorArticulo;
         },
         cerrarModal: function cerrarModal() {
             this.modal = 0;
             this.tituloModal = '';
+            this.id_categoria = 0;
+            this.nombreCategoria = '';
+            this.codigo = '';
             this.nombre = '';
+            this.precioVenta = 0;
+            this.stock = 0;
             this.descripcion = '';
+            this.errorArticulo = 0;
         },
         abrirModal: function abrirModal(modelo, accion) {
             var data = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
@@ -49092,7 +49106,12 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                                 {
                                     this.modal = 1;
                                     this.tituloModal = 'Resgistrar Articulo';
+                                    this.id_categoria = 0;
+                                    this.nombreCategoria = '';
+                                    this.codigo = '';
                                     this.nombre = '';
+                                    this.precioVenta = 0;
+                                    this.stock = 0;
                                     this.descripcion = '';
                                     this.tipoAccion = 1;
 
@@ -49104,8 +49123,12 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                                     this.modal = 1;
                                     this.tituloModal = 'Actualizar Articulo';
                                     this.tipoAccion = 2;
-                                    this.categoria_id = data['id'];
+                                    this.articulo_id = data['id'];
+                                    this.id_categoria = data['id_categoria'];
+                                    this.codigo = data['codigo'];
                                     this.nombre = data['nombre'];
+                                    this.stock = data['stock'];
+                                    this.precioVenta = data['precio_venta'];
                                     this.descripcion = data['descripcion'];
                                     break;
                                 }
@@ -49797,7 +49820,7 @@ var render = function() {
                         attrs: { type: "button" },
                         on: {
                           click: function($event) {
-                            _vm.registrarCategoria()
+                            _vm.registrarArticulo()
                           }
                         }
                       },
@@ -49813,7 +49836,7 @@ var render = function() {
                         attrs: { type: "button" },
                         on: {
                           click: function($event) {
-                            _vm.actualizarCategoria()
+                            _vm.actualizarArticulo()
                           }
                         }
                       },

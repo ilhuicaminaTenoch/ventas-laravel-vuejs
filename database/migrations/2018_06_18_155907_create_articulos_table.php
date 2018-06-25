@@ -20,7 +20,7 @@ class CreateArticulosTable extends Migration
             $table->string('nombre',100)->unique();
             $table->decimal('precio_venta',11,2);
             $table->integer('stock');
-            $table->string('descripcion',256)->nulllable();
+            $table->string('descripcion',256);
             $table->boolean('condicion')->default(1);
             $table->timestamps();
 

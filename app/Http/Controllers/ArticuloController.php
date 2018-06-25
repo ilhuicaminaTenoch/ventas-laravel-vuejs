@@ -45,23 +45,31 @@ class ArticuloController extends Controller
     {
         if (!$request->ajax()) return redirect('/');
 
-        $categoria = new Categoria();
+        $articulo = new Articulo();
 
-        $categoria->nombre = $request->nombre;
-        $categoria->descripcion = $request->descripcion;
-        $categoria->condicion = '1';
-        $categoria->save();
+        $articulo->id_categoria = $request->id_categoria;
+        $articulo->codigo = $request->codigo;
+        $articulo->nombre = $request->nombre;
+        $articulo->precio_venta = $request->precio_venta;
+        $articulo->stock = $request->stock;
+        $articulo->descripcion = $request->descripcion;
+        $articulo->condicion = '1';
+        $articulo->save();
     }
 
     public function update(Request $request)
     {
         if (!$request->ajax()) return redirect('/');
 
-        $categoria = Categoria::findOrFail($request->id);
-        $categoria->nombre = $request->nombre;
-        $categoria->descripcion = $request->descripcion;
-        $categoria->condicion = '1';
-        $categoria->save();
+        $articulo = Articulo::findOrFail($request->id);
+        $articulo->id_categoria = $request->id_categoria;
+        $articulo->codigo = $request->codigo;
+        $articulo->nombre = $request->nombre;
+        $articulo->precio_venta = $request->precio_venta;
+        $articulo->stock = $request->stock;
+        $articulo->descripcion = $request->descripcion;
+        $articulo->condicion = '1';
+        $articulo->save();
 
     }
 
