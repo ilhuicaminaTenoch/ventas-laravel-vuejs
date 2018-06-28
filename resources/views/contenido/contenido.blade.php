@@ -25,7 +25,7 @@
     </template>
 
     <template v-if="menu==6">
-        <h1>Contenido el menu 6</h1>
+        <cliente></cliente>
     </template>
 
     <template v-if="menu==7">

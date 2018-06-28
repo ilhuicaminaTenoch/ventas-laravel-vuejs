@@ -76,7 +76,7 @@ class ArticuloController extends Controller
     public function desactivar(Request $request)
     {
         if (!$request->ajax()) return redirect('/');
-        $categoria = Categoria::findOrFail($request->id);
+        $categoria = Articulo::findOrFail($request->id);
         $categoria->condicion = '0';
         $categoria->save();
     }
@@ -85,7 +85,7 @@ class ArticuloController extends Controller
     {
         if (!$request->ajax()) return redirect('/');
 
-        $categoria = Categoria::findOrFail($request->id);
+        $categoria = Articulo::findOrFail($request->id);
         $categoria->condicion = '1';
         $categoria->save();
     }

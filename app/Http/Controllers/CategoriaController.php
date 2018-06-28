@@ -60,16 +60,14 @@ class CategoriaController extends Controller
     {
         if (!$request->ajax()) return redirect('/');
 
-        $articulo = new Articulo();
+        $categoria = new Categoria();
 
-        $articulo->id_categoria = $request->id_categoria;
-        $articulo->codigo = $request->codigo;
-        $articulo->nombre = $request->nombre;
-        $articulo->precio_venta = $request->precio_venta;
-        $articulo->stock = $request->stock;
-        $articulo->descripcion = $request->descripcion;
-        $articulo->condicion = '1';
-        $articulo->save();
+        $categoria->nombre = $request->nombre;
+        $categoria->descripcion = $request->descripcion;
+        $categoria->condicion = '1';
+        $categoria->save();
+
+
     }
 
     /**
@@ -83,22 +81,18 @@ class CategoriaController extends Controller
     {
         if (!$request->ajax()) return redirect('/');
 
-        $articulo = Articulo::findOrFail($request->id);
-        $articulo->id_categoria = $request->id_categoria;
-        $articulo->codigo = $request->codigo;
-        $articulo->nombre = $request->nombre;
-        $articulo->precio_venta = $request->precio_venta;
-        $articulo->stock = $request->stock;
-        $articulo->descripcion = $request->descripcion;
-        $articulo->condicion = '1';
-        $articulo->save();
+        $categoria = Categoria::findOrFail($request->id);
+        $categoria->nombre = $request->nombre;
+        $categoria->descripcion = $request->descripcion;
+        $categoria->condicion = '1';
+        $categoria->save();
 
     }
 
     public function desactivar(Request $request)
     {
         if (!$request->ajax()) return redirect('/');
-        $articulo = Articulo::findOrFail($request->id);
+        $articulo = Categoria::findOrFail($request->id);
         $articulo->condicion = '0';
         $articulo->save();
     }
@@ -107,7 +101,7 @@ class CategoriaController extends Controller
     {
         if (!$request->ajax()) return redirect('/');
 
-        $articulo = Articulo::findOrFail($request->id);
+        $articulo = Categoria::findOrFail($request->id);
         $articulo->condicion = '1';
         $articulo->save();
     }

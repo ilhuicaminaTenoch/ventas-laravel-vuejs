@@ -46,12 +46,12 @@
                                     <i class="icon-pencil"></i>
                                 </button> &nbsp;
                                 <template v-if="articulo.condicion">
-                                    <button type="button" class="btn btn-danger btn-sm" @click="desactivarCategoria(articulo.id)">
+                                    <button type="button" class="btn btn-danger btn-sm" @click="desactivarArticulo(articulo.id)">
                                         <i class="icon-trash"></i>
                                     </button>
                                 </template>
                                 <template v-else>
-                                    <button type="button" class="btn btn-info btn-sm" @click="activarCategoria(articulo.id)">
+                                    <button type="button" class="btn btn-info btn-sm" @click="activarArticulo(articulo.id)">
                                         <i class="icon-check"></i>
                                     </button>
                                 </template>
@@ -117,6 +117,9 @@
                                 <label class="col-md-3 form-control-label" for="text-input">Codigo</label>
                                 <div class="col-md-9">
                                     <input type="text" v-model="codigo" class="form-control" placeholder="Codigo de barras">
+                                    <barcode :value="codigo" :options="{format: 'EAN-13'}">
+                                        Generando código de barras.
+                                    </barcode>
 
                                 </div>
                             </div>
@@ -172,6 +175,7 @@
 </template>
 
 <script>
+    import VueBarcode from 'vue-barcode';
     export default {
         data(){
             return{
@@ -202,6 +206,9 @@
                 buscar : '',
                 arrayCategoria:[]
             }
+        },
+        components: {
+            'barcode': VueBarcode
         },
         computed:{
             isActived: function () {
@@ -297,7 +304,7 @@
                     'id' : this.articulo_id
                 }).then(function (response) {
                     me.cerrarModal();
-                    me.listarCartegoria(1,'','nombre');
+                    me.listarArticulo(1,'','nombre');
                 }).catch(function (error) {
                     console.log(error);
                 });
@@ -311,7 +318,7 @@
                 });
 
                 swalWithBootstrapButtons({
-                    title: 'Esta seguro de desactivar esta categoria?',
+                    title: 'Esta seguro de desactivar este articulo?',
                     type: 'warning',
                     showCancelButton: true,
                     confirmButtonText: 'Aceptar',
@@ -320,10 +327,10 @@
                 }).then((result) => {
                     if (result.value) {
                     let me = this;
-                    axios.put('/categoria/desactivar',{
+                    axios.put('/articulo/desactivar',{
                         'id' : id
                     }).then(function (response) {
-                        me.listarCartegoria(1,'','nombre');
+                        me.listarArticulo(1,'','nombre');
                         swalWithBootstrapButtons(
                             'Desactivado!',
                             'El registro ha sido desactivado',
@@ -343,7 +350,7 @@
                 });
 
                 swalWithBootstrapButtons({
-                    title: 'Esta seguro de activar esta categoria?',
+                    title: 'Esta seguro de activar este articulo?',
                     type: 'warning',
                     showCancelButton: true,
                     confirmButtonText: 'Aceptar',
@@ -352,10 +359,10 @@
                 }).then((result) => {
                     if (result.value) {
                     let me = this;
-                    axios.put('/categoria/activar',{
+                    axios.put('/articulo/activar',{
                         'id' : id
                     }).then(function (response) {
-                        me.listarCartegoria(1,'','nombre');
+                        me.listarArticulo(1,'','nombre');
                         swalWithBootstrapButtons(
                             'Activado!',
                             'El registro ha sido activado',
@@ -416,7 +423,6 @@
                             }
                             case "actualizar":
                             {
-                                //console.log(data);
                                 this.modal = 1;
                                 this.tituloModal = 'Actualizar Articulo';
                                 this.tipoAccion = 2;

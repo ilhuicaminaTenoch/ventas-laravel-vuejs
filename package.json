@@ -21,6 +21,7 @@
         "vue": "^2.5.7"
     },
     "dependencies": {
-        "pngquant-bin": "^3.1.1"
+        "pngquant-bin": "^3.1.1",
+        "vue-barcode": "^1.1.0"
     }
 }
