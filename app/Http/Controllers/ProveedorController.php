@@ -39,7 +39,7 @@ class ProveedorController extends Controller
                 'from'          => $proveedor->firstItem(),
                 'to'            => $proveedor->lastItem()
             ],
-            'proveedores'    => $proveedor
+            'personas'    => $proveedor
         ];
     }
 
@@ -61,14 +61,16 @@ class ProveedorController extends Controller
             $persona->save();
 
             $proveedor = new Proveedor();
+            $proveedor->id = $persona->id;
             $proveedor->contacto = $request->contacto;
             $proveedor->telefono_contacto = $request->telefono_contacto;
-            $proveedor->id = $persona->id;
             $proveedor->save();
+
+
 
             DB::commit();
 
-        }catch (\Exception $exception){
+        }catch (Exception $exception){
             DB::rollBack();
         }
     }
