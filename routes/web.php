@@ -38,3 +38,13 @@ Route::get('/proveedor','ProveedorController@index');
 Route::post('/proveedor/registrar','ProveedorController@store');
 Route::put('/proveedor/actualizar','ProveedorController@update');
 
+Route::get('/rol','RolController@index');
+Route::get('/rol/select-rol','RolController@selectRol');
+
+Route::get('/user','UserController@index');
+Route::post('/user/registrar','UserController@store');
+Route::put('/user/actualizar','UserController@update');
+Route::put('/user/activar','UserController@activar');
+Route::put('/user/desactivar','UserController@desactivar');
+
+
