@@ -101,7 +101,7 @@ class UserController extends Controller
             $persona->save();
 
             $user->usuario = $request->usuario;
-            $user->password = $request->password;
+            $user->password = bcrypt($request->password);
             $user->condicion = 1;
             $user->idrol = $request->idrol;
             $user->save();

@@ -31,8 +31,7 @@
                         <tr>
                             <th>Opciones</th>
                             <th>Nombre</th>
-                            <th>Documento</th>
-                            <th>#</th>
+                            <th>Documennto</th>
                             <th>Direccion</th>
                             <th>Teléfono</th>
                             <th>Email</th>
