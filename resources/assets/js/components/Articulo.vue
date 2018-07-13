@@ -64,7 +64,7 @@
                             <td v-text="articulo.stock"></td>
                             <td v-text="articulo.descripcion"></td>
                             <td>
-                                <div v-if="articulo.condicion">
+                                <div v-if="articulo.condicion1">
                                     <span class="badge badge-success">Activo</span>
                                 </div>
                                 <div v-else>
