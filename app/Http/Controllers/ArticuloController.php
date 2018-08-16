@@ -41,6 +41,21 @@ class ArticuloController extends Controller
         ];
     }
 
+    public function buscarArticulo(Request $request){
+        if (!$request->ajax()) return redirect('/');
+
+        $filtro = $request->filtro;
+        $articulo = Articulo::where('codigo', '=', $filtro)
+            ->select('id', 'nombre')
+            ->orderBy('nombre', 'asc')
+            ->take(1)
+            ->get();
+
+        return ['articulos' => $articulo];
+
+
+    }
+
     public function store(Request $request)
     {
         if (!$request->ajax()) return redirect('/');

@@ -9,94 +9,104 @@
             <div class="card">
                 <div class="card-header">
                     <i class="fa fa-align-justify"></i> Ingresos
-                    <button type="button" @click="abrirModal('ingreso', 'registrar')" class="btn btn-secondary">
+                    <button type="button" @click="mostrarDetalle()" class="btn btn-secondary">
                         <i class="icon-plus"></i>&nbsp;Nuevo
                     </button>
                 </div>
-                <div class="card-body">
-                    <div class="form-group row">
-                        <div class="col-md-6">
-                            <div class="input-group">
-                                <select class="form-control col-md-3" v-model="criterio">
-                                    <option value="tipo_comprobante">Tipo Comprobante</option>
-                                    <option value="num_comprobante">Número Comprobante</option>
-                                    <option value="fecha_hora">Fecha-Hora</option>
-                                </select>
-                                <input type="text" v-model="buscar" @keyup.enter="listarIngreso(1, buscar, criterio)"
-                                       class="form-control" placeholder="Texto a buscar">
-                                <button type="submit" @click="listarIngreso(1, buscar, criterio)"
-                                        class="btn btn-primary"><i class="fa fa-search"></i> Buscar
-                                </button>
+                <template v-if="listado">
+                    <div class="card-body">
+                        <div class="form-group row">
+                            <div class="col-md-6">
+                                <div class="input-group">
+                                    <select class="form-control col-md-3" v-model="criterio">
+                                        <option value="tipo_comprobante">Tipo Comprobante</option>
+                                        <option value="num_comprobante">Número Comprobante</option>
+                                        <option value="fecha_hora">Fecha-Hora</option>
+                                    </select>
+                                    <input type="text" v-model="buscar" @keyup.enter="listarIngreso(1, buscar, criterio)"
+                                           class="form-control" placeholder="Texto a buscar">
+                                    <button type="submit" @click="listarIngreso(1, buscar, criterio)"
+                                            class="btn btn-primary"><i class="fa fa-search"></i> Buscar
+                                    </button>
+                                </div>
                             </div>
                         </div>
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped table-sm">
+                                <thead>
+                                <tr>
+                                    <th>Opciones</th>
+                                    <th>Usuario</th>
+                                    <th>Proveedor</th>
+                                    <th>Tipo Comprobante</th>
+                                    <th>Serie Comprobante</th>
+                                    <th>Número Comprobante</th>
+                                    <th>Fecha Hora</th>
+                                    <th>Total</th>
+                                    <th>Impuesto</th>
+                                    <th>Estado</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr v-for="ingreso in arrayIngreso" :key="ingreso.id">
+                                    <td>
+                                        <button type="button" @click="abrirModal('ingreso', 'actualizar', ingreso)"
+                                                class="btn btn-success btn-sm">
+                                            <i class="icon-eye"></i>
+                                        </button> &nbsp;
+                                        <template v-if="ingreso.estado == 'Registrado'">
+                                            <button type="button" class="btn btn-danger btn-sm"
+                                                    @click="desactivarIngreso(ingreso.id)">
+                                                <i class="icon-trash"></i>
+                                            </button>
+                                        </template>
+                                    </td>
+                                    <td v-text="ingreso.usuario"></td>
+                                    <td v-text="ingreso.nombre"></td>
+                                    <td v-text="ingreso.tipo_comprobante"></td>
+                                    <td v-text="ingreso.serie_comprobante"></td>
+                                    <td v-text="ingreso.num_comprobante"></td>
+                                    <td v-text="ingreso.fecha_hora"></td>
+                                    <td v-text="ingreso.total"></td>
+                                    <td v-text="ingreso.impuesto"></td>
+                                    <td v-text="ingreso.estado"></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <nav>
+                            <ul class="pagination">
+                                <li class="page-item" v-if="pagination.current_page > 1">
+                                    <a class="page-link" href="#"
+                                       @click.prevent="cambiarPagina(pagination.current_page - 1, buscar, criterio)">Ant</a>
+                                </li>
+                                <li class="page-item" v-for="page in pagesNumber" :key="page"
+                                    :class="[page == isActived ? 'active' : '']">
+                                    <a class="page-link" href="#" @click.prevent="cambiarPagina(page, buscar, criterio)"
+                                       v-text="page"></a>
+                                </li>
+                                <li class="page-item" v-if="pagination.current_page < pagination.last_page">
+                                    <a class="page-link" href="#"
+                                       @click.prevent="cambiarPagina(pagination.current_page + 1, buscar, criterio)">Sig</a>
+                                </li>
+                            </ul>
+                        </nav>
                     </div>
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-striped table-sm">
-                            <thead>
-                            <tr>
-                                <th>Opciones</th>
-                                <th>Usuario</th>
-                                <th>Proveedor</th>
-                                <th>Tipo Comprobante</th>
-                                <th>Serie Comprobante</th>
-                                <th>Número Comprobante</th>
-                                <th>Fecha Hora</th>
-                                <th>Total</th>
-                                <th>Impuesto</th>
-                                <th>Estado</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr v-for="ingreso in arrayIngreso" :key="ingreso.id">
-                                <td>
-                                    <button type="button" @click="abrirModal('ingreso', 'actualizar', ingreso)"
-                                            class="btn btn-success btn-sm">
-                                        <i class="icon-eye"></i>
-                                    </button> &nbsp;
-                                    <template v-if="ingreso.estado == 'Registrado'">
-                                        <button type="button" class="btn btn-danger btn-sm"
-                                                @click="desactivarIngreso(ingreso.id)">
-                                            <i class="icon-trash"></i>
-                                        </button>
-                                    </template>
-                                </td>
-                                <td v-text="ingreso.usuario"></td>
-                                <td v-text="ingreso.nombre"></td>
-                                <td v-text="ingreso.tipo_comprobante"></td>
-                                <td v-text="ingreso.serie_comprobante"></td>
-                                <td v-text="ingreso.num_comprobante"></td>
-                                <td v-text="ingreso.fecha_hora"></td>
-                                <td v-text="ingreso.total"></td>
-                                <td v-text="ingreso.impuesto"></td>
-                                <td v-text="ingreso.estado"></td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <nav>
-                        <ul class="pagination">
-                            <li class="page-item" v-if="pagination.current_page > 1">
-                                <a class="page-link" href="#"
-                                   @click.prevent="cambiarPagina(pagination.current_page - 1, buscar, criterio)">Ant</a>
-                            </li>
-                            <li class="page-item" v-for="page in pagesNumber" :key="page"
-                                :class="[page == isActived ? 'active' : '']">
-                                <a class="page-link" href="#" @click.prevent="cambiarPagina(page, buscar, criterio)"
-                                   v-text="page"></a>
-                            </li>
-                            <li class="page-item" v-if="pagination.current_page < pagination.last_page">
-                                <a class="page-link" href="#"
-                                   @click.prevent="cambiarPagina(pagination.current_page + 1, buscar, criterio)">Sig</a>
-                            </li>
-                        </ul>
-                    </nav>
-                </div>
-                <div class="card-body">
+                </template>
+                <template v-else>
+                    <div class="card-body">
                     <div class="form-group row border">
                         <div class="col-md-9">
                             <div class="form-group">
                                 <label for="">Proveedor(*)</label>
-                                <select class="form-control"></select>
+                                <v-select
+                                    :on-search="selectProveedor"
+                                    label="nombre"
+                                    :options="arrayProveedor"
+                                    placeholder="Buscar Proveedores..."
+                                    :onChange="getDatosProveedor"
+                                >
+                                </v-select>
                             </div>
                         </div>
                         <div class="col-md-3">
@@ -130,9 +140,10 @@
                             <div class="form-group">
                                 <label for="">Articulo</label>
                                 <div class="form-inline">
-                                    <input type="tex" class="form-control" v-model="idarticulo"
-                                           placeholder="Ingrese articulo"/>
+                                    <input type="tex" class="form-control" v-model="codigo"
+                                           placeholder="Ingrese articulo" @keyup.enter="buscarArticulo()"/>
                                     <button class="btn btn-primary">...</button>
+                                    <input type="text" readonly class="form-control" v-model="articulo"/>
                                 </div>
                             </div>
                         </div>
@@ -167,14 +178,14 @@
                                 <th>Cantidad</th>
                                 <th>Subtotal</th>
                                 </thead>
-                                <tbody>
-                                <tr>
+                                <tbody v-if="arrayDetalle.length">
+                                <tr v-for="detalle in arrayDetalle" :key="detalle.id">
                                     <td>
                                         <button type="button" class="btn btn-danger btn-sm">
                                             <i class="icon-close"></i>
                                         </button>
                                     </td>
-                                    <td>Articulo</td>
+                                    <td></td>
                                     <td>
                                         <input type="number" value="3" class="form-control"/>
                                     </td>
@@ -218,14 +229,35 @@
                                     <td>
                                         $6.00
                                     </td>
+                                </tr>
+                                <tr style="background-color: #CEECF5;">
+                                    <td colspan="4" align="right"><strong>Total Parcial:</strong></td>
+                                    <td>$5</td>
+                                </tr>
+                                <tr style="background-color: #CEECF5;">
+                                    <td colspan="4" align="right"><strong>Total Impuesto:</strong></td>
+                                    <td>$1</td>
+                                </tr>
+                                <tr style="background-color: #CEECF5;">
+                                    <td colspan="4" align="right"><strong>Total Neto:</strong></td>
+                                    <td>$6</td>
                                 </tr>
                                 </tbody>
                             </table>
                         </div>
                     </div>
+                    <div class="form-group row">
+                        <div class="col-md-12">
+                            <button type="button" class="btn btn-secondary" @click="ocultarDetalle()">Cerrar</button>
+                            <button type="button" class="btn btn-primary" @click="registrarIngreso()">Registrar Compra
+                            </button>
+                        </div>
+                    </div>
                 </div>
+                </template>
 
             </div>
+
             <!-- Fin ejemplo de tabla Listado -->
         </div>
         <!--Inicio del modal agregar/actualizar-->
@@ -261,21 +293,21 @@
 </template>
 
 <script>
+    import vSelect from 'vue-select';
     export default {
         data() {
             return {
                 ingreso_id: 0,
                 idproveedor: 0,
-                idarticulo:0,
                 nombre: '',
                 tipo_comprobante: 'BOLETA',
                 serie_comprobante: '',
                 num_comprobante: '',
                 impuesto: 0.16,
                 total: 0.0,
-                cantidad:0,
-                precio:0,
                 arrayIngreso: [],
+                arrayProveedor:[],
+                listado:1,
                 arrayDetalle: [],
                 modal: 0,
                 tituloModal: '',
@@ -292,8 +324,17 @@
                 },
                 offset: 3,
                 criterio: 'num_comprobante',
-                buscar: ''
+                buscar: '',
+                arrayArticulo:[],
+                idarticulo:0,
+                codigo:0,
+                articulo:'',
+                precio:0,
+                cantidad:0
             }
+        },
+        components:{
+          vSelect
         },
         computed: {
             isActived: function () {
@@ -331,16 +372,47 @@
                 me.pagination.current_page = page;
                 me.listarIngreso(page, buscar, criterio);
             },
-            selectRol() {
+            selectProveedor(search, loading) {
                 let me = this;
-                var url = '/rol/select-rol';
+                loading(true)
+
+                var url = '/proveedor/selectProveedor?filtro='+search;
 
                 axios.get(url).then(function (response) {
-                    var respuesta = response.data;
-                    me.arrayRol = respuesta.roles;
+                    let respuesta = response.data;
+                    q:search
+                    me.arrayProveedor = respuesta.proveedores;
+                    loading(false)
+
                 }).catch(function (error) {
                     console.log(error);
                 });
+            },
+            getDatosProveedor(val1){
+                let me = this;
+                me.loading = true;
+                me.idproveedor = val1.id;
+            },
+            buscarArticulo(){
+                let me = this;
+                var url = '/articulo/buscarArticulo?filtro=' + me.codigo;
+
+                axios.get(url).then(function (response) {
+                    var respuesta = response.data;
+                    me.arrayArticulo = respuesta.articulos;
+
+                    if (me.arrayArticulo.length>0){
+                        me.articulo = me.arrayArticulo[0]['nombre'];
+                        me.idarticulo = me.arrayArticulo[0]['id'];
+                    }else{
+                        me.articulo = 'No existe articulo';
+                        me.idarticulo = 0;
+                    }
+
+                }).catch(function (error) {
+                        console.log(error);
+                });
+
             },
             listarIngreso(page, buscar, criterio) {
                 let me = this;
@@ -415,6 +487,12 @@
                 if (this.errorMostrarMensajePersona.length) this.errorPersona = 1;
 
                 return this.errorPersona;
+            },
+            mostrarDetalle(){
+                this.listado = 0;
+            },
+            ocultarDetalle(){
+                this.listado = 1;
             },
             cerrarModal() {
                 this.modal = 0;
@@ -564,8 +642,9 @@
         color: red !important;
         font-weight: bold;
     }
+
     @media (min-width: 600px) {
-        .btnagregar{
+        .btnagregar {
             margin-top: 2rem;
         }
     }

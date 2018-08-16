@@ -22,6 +22,7 @@
     },
     "dependencies": {
         "pngquant-bin": "^3.1.1",
-        "vue-barcode": "^1.1.0"
+        "vue-barcode": "^1.1.0",
+        "vue-select": "^2.4.0"
     }
 }
